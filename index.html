@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Glass Poker - Ultimate Edition</title>
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            /* Backgrounds */
+            --bg-deep: #0a0a0c;
+            --bg-radial: radial-gradient(circle at 50% 0%, #2a2a35, #000000);
+            
+            /* Liquid Glass Colors */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg-hover: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-highlight: rgba(255, 255, 255, 0.25);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            
+            /* Text & Accents */
+            --text-main: #ffffff;
+            --text-muted: #a0a0a5;
+            --accent: #a87ffb;
+            --danger: #ff453a;
+            
+            /* Layout */
+            --card-w: 64px;
+            --card-h: 92px;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-radial);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        /* ==========================================================================
+           2. LIQUID GLASS MASTER CLASSES
+           ========================================================================== */
+        .liquid-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-highlight);
+            border-left: 1px solid var(--glass-highlight);
+            box-shadow: var(--glass-shadow);
+            border-radius: var(--radius-lg);
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .liquid-glass:active {
+            background: var(--glass-bg-hover);
+        }
+
+        .liquid-glass-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .liquid-glass-btn:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* ==========================================================================
+           3. VIEW MANAGEMENT & LAYOUT
+           ========================================================================== */
+        .hidden { display: none !important; }
+        
+        .view {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 24px;
+            padding-bottom: 110px; /* Space for nav */
+            position: absolute;
+            top: 0; left: 0;
+            overflow-y: auto;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 28px;
+            cursor: pointer;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .back-btn:active { background: var(--glass-bg); }
+
+        /* ==========================================================================
+           4. HOME SCREEN & INVENTORY
+           ========================================================================== */
+        .logo-container {
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo-container img {
+            max-height: 50px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+        }
+
+        .balance-hero {
+            font-size: 48px;
+            font-weight: 200;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        /* Inventory Items */
+        .inventory-row {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .inventory-row::-webkit-scrollbar {
+            height: 4px;
+        }
+        .inventory-row::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+        .inventory-row::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+        .inventory-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        .inventory-item span { 
+            font-size: 9px; 
+            margin-top: 5px; 
+            text-transform: uppercase; 
+            font-weight: bold; 
+            color: var(--text-main);
+            text-align: center;
+        }
+        .inventory-item.empty { 
+            font-size: 12px; 
+            color: var(--text-muted); 
+            opacity: 0.5; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%;
+        }
+
+        /* ==========================================================================
+           5. SHOP & OVERLAYS
+           ========================================================================== */
+        .shop-input-area { margin: 40px 0; }
+        
+        .glass-input {
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 32px;
+            padding: 20px;
+            text-align: center;
+            outline: none;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            transition: border 0.3s;
+        }
+
+        .glass-input:focus { border-color: var(--accent); }
+
+        .shop-items-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding-bottom: 40px;
+        }
+        .shop-item-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .shop-item-icon { font-size: 40px; margin-bottom: 10px; }
+        .shop-item-name { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+        .shop-item-price { font-size: 12px; color: var(--accent); margin-bottom: 10px; font-weight: bold; }
+        .shop-item-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .shop-item-btn:active { background: rgba(255,255,255,0.2); transform: scale(0.95); }
+        .shop-item-btn.owned { background: transparent; color: var(--text-muted); border-color: transparent; opacity: 0.5; pointer-events: none; }
+
+        .fullscreen-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 60px; height: 60px;
+            border: 4px solid var(--glass-border);
+            border-top: 4px solid var(--text-main);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* ==========================================================================
+           6. ARENAS
+           ========================================================================== */
+        .arenas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-bottom: 30px;
+        }
+
+        .arena-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arena-card:active {
+            transform: scale(0.97);
+            background: var(--glass-bg-hover);
+        }
+
+        .arena-card.locked {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .arena-icon {
+            font-size: 36px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
+
+        .arena-info {
+            flex: 1;
+        }
+
+        .arena-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .arena-details {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .arena-buyin {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .arena-lock-icon {
+            position: absolute;
+            right: 20px;
+            font-size: 24px;
+            opacity: 0.8;
+        }
+
+        /* ==========================================================================
+           7. GAME ARENA
+           ========================================================================== */
+        #view-game { justify-content: space-between; padding-bottom: 20px; }
+        
+        .pot-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .pot-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(168, 127, 251, 0.4);
+        }
+
+        /* Opponents */
+        .opponents-matrix {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .opp-seat {
+            flex: 1;
+            padding: 12px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            border-radius: var(--radius-md);
+        }
+
+        .opp-seat.folded { opacity: 0.3; }
+        .opp-seat.active-turn { border-color: rgba(255,255,255,0.8); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        
+        .opp-avatar { font-size: 28px; margin-bottom: 4px; z-index: 2; position: relative; }
+        .opp-chips { font-size: 12px; font-weight: bold; }
+        
+        .opp-action-badge {
+            position: absolute;
+            bottom: -10px;
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s;
+            z-index: 5;
+        }
+        .opp-action-badge.show { opacity: 1; transform: translateY(0); }
+
+        .opp-hole-cards {
+            display: flex;
+            position: absolute;
+            top: -30px;
+            transform: scale(0.35);
+            z-index: 1;
+        }
+        .opp-hole-cards .playing-card { position: absolute; }
+        .opp-hole-cards .playing-card:nth-child(1) { left: -30px; transform: rotate(-8deg); }
+        .opp-hole-cards .playing-card:nth-child(2) { left: 10px; transform: rotate(8deg); }
+
+        /* Board & Cards */
+        .board-area {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            height: var(--card-h);
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .playing-card {
+            width: var(--card-w);
+            height: var(--card-h);
+            perspective: 1000px;
+        }
+
+        .card-flipper {
+            width: 100%; height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: var(--radius-sm);
+        }
+
+        .playing-card.flipped .card-flipper { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius-sm);
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 6px;
+            font-weight: bold; font-size: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .card-back {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .card-back::after { content: '✺'; color: rgba(255,255,255,0.3); font-size: 24px; }
+
+        .card-front {
+            background: rgba(255,255,255,0.95);
+            color: #000;
+            transform: rotateY(180deg);
+        }
+
+        .card-front.suit-red { color: var(--danger); }
+        .card-suit-icon { align-self: flex-end; font-size: 16px; }
+
+        /* Player Area & Touch Zone */
+        .player-dashboard {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        .system-message {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            height: 20px;
+        }
+
+        .touch-swipe-zone {
+            display: flex;
+            justify-content: center;
+            height: var(--card-h);
+            touch-action: none; /* Prevents browser scrolling */
+            position: relative;
+            z-index: 10;
+        }
+
+        .pocket-cards {
+            display: flex;
+            position: relative;
+            width: 100px;
+            transition: transform 0.1s ease-out;
+        }
+
+        .pocket-cards .playing-card { position: absolute; box-shadow: -5px 0 15px rgba(0,0,0,0.5); }
+        .pocket-cards .playing-card:nth-child(1) { left: 0; transform: rotate(-6deg); z-index: 1; }
+        .pocket-cards .playing-card:nth-child(2) { left: 36px; transform: rotate(6deg); z-index: 2; }
+        
+        /* Fold Animation */
+        .pocket-cards.is-folding {
+            transition: transform 0.4s ease-in, opacity 0.3s;
+            transform: translateY(-200px) rotateX(60deg) scale(0.6);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Controls */
+        .action-row {
+            display: flex;
+            gap: 10px;
+            height: 65px;
+            transition: opacity 0.3s;
+        }
+        
+        .action-row.disabled { opacity: 0.3; pointer-events: none; }
+
+        .prob-container {
+            width: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 5px;
+        }
+
+        .prob-value { font-size: 18px; color: var(--accent); margin-top: 2px; }
+
+        #live-hand-display {
+            margin-top: 4px;
+            font-size: 9px;
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 6px;
+            padding: 2px 6px;
+            text-align: center;
+            background: rgba(255,255,255,0.15);
+            width: 100%;
+            text-transform: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-call, .btn-raise { flex: 1; font-size: 16px; }
+        .btn-raise { background: rgba(255,255,255,0.15); } /* Brighter glass for raise */
+        
+        .btn-next-hand { width: 100%; height: 55px; font-size: 16px; }
+
+        /* ==========================================================================
+           8. RULES OVERLAY (VISUAL HANDS)
+           ========================================================================== */
+        .rules-overlay-panel {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            height: 75%;
+            background: rgba(15, 15, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-highlight);
+            border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg);
+            padding: 24px;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 900;
+            display: flex; flex-direction: column;
+        }
+
+        .rules-overlay-panel.open { transform: translateY(0); }
+
+        .rules-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .rules-close { background: rgba(255,255,255,0.1); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+        
+        .rules-list { overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+        
+        .rule-item {
+            display: flex; flex-direction: column; gap: 8px;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .rule-item.active-rule {
+            border: 2px solid white !important;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+        
+        .rule-text { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; }
+        .rule-desc { font-size: 11px; color: var(--text-muted); font-weight: normal; }
+        
+        .mini-cards-row { display: flex; gap: 4px; }
+        .mini-card {
+            width: 26px; height: 36px; background: white; border-radius: 4px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 12px; font-weight: bold; color: black;
+        }
+        .mini-card.red { color: var(--danger); }
+
+        /* ==========================================================================
+           9. BOTTOM NAVIGATION
+           ========================================================================== */
+        .bottom-navbar {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 90px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            padding-top: 15px;
+            z-index: 100;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            opacity: 0.4; transition: 0.3s; cursor: pointer;
+        }
+
+        .nav-item.active { opacity: 1; }
+        
+        /* Filter turns external black icons to pure white */
+        .nav-item img {
+            width: 26px; height: 26px;
+            filter: brightness(0) invert(1);
+        }
+
+        .nav-text { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div id="view-home" class="view">
+        <div class="logo-container">
+            <img src="https://img.icons8.com/ios-filled/100/ffffff/spades.png" alt="Logo">
+        </div>
+        
+        <div class="balance-hero" id="home-balance-display">2.500</div>
+        
+        <h3 style="margin-left: 10px; margin-bottom: 10px; margin-top: 5px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Wähle deinen Tisch</h3>
+        <div class="arenas-list" id="arenas-list-container">
+            <!-- populated by JS -->
+        </div>
+
+        <h3 style="margin-left: 10px; margin-bottom: 10px; margin-top: 10px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Dein Inventar</h3>
+        <div class="inventory-row" id="inventory-container">
+            <!-- Items appear here -->
+        </div>
+    </div>
+
+    <div id="view-shop" class="view hidden">
+        <div class="header">
+            <button class="back-btn" onclick="app.switchView('view-home')">←</button>
+            <h2 style="font-size: 20px; font-weight: 600;">Tresor & Shop</h2>
+            <div style="width: 40px;"></div>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 50px; margin-bottom: 10px;">🪙</div>
+            <p style="color: var(--text-muted); font-size: 14px;">Lade deine Test-Chips kostenlos auf.</p>
+        </div>
+
+        <div class="shop-input-area" style="margin-bottom: 20px;">
+            <input type="number" id="shop-input-val" class="glass-input" placeholder="Betrag..." min="100">
+        </div>
+        <button class="liquid-glass-btn" style="padding: 20px; font-size: 18px; width: 100%;" onclick="app.requestChips()">
+            Chips Anfordern
+        </button>
+
+        <h3 style="margin-top: 50px; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Luxus Boutique</h3>
+        <div class="shop-items-grid" id="shop-items-container">
+            <!-- populated by JS -->
+        </div>
+    </div>
+
+    <div id="view-game" class="view hidden">
+        <div class="header" style="margin-bottom: 10px;">
+            <button class="back-btn" onclick="app.switchView('view-home')">←</button>
+            <div style="font-weight: bold; font-size: 18px;" id="game-balance-display">2.500</div>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <div class="pot-container">
+            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Pot</div>
+            <div class="pot-value" id="game-pot-display">0</div>
+        </div>
+
+        <div class="opponents-matrix" id="bots-container">
+            </div>
+
+        <div class="board-area" id="board-container" onclick="app.openRules()">
+            </div>
+
+        <div class="player-dashboard">
+            <div class="system-message" id="game-status-msg">Wische hoch zum Folden</div>
+            
+            <div class="touch-swipe-zone" id="swipe-drag-zone">
+                <div class="pocket-cards" id="player-pocket-cards">
+                    </div>
+            </div>
+
+            <div class="action-row" id="player-action-controls">
+                <div class="liquid-glass prob-container" onclick="app.openRules()" style="cursor: pointer;">
+                    <span>Win</span>
+                    <span class="prob-value" id="win-probability-display">--%</span>
+                    <div id="live-hand-display">High Card</div>
+                </div>
+                <button class="liquid-glass-btn btn-call" id="btn-action-call" onclick="app.handlePlayerAction('call')">Call 10</button>
+                <button class="liquid-glass-btn btn-raise" id="btn-action-raise" onclick="app.handlePlayerAction('raise')">Raise 20</button>
+            </div>
+            
+            <button class="liquid-glass-btn btn-next-hand hidden" id="btn-next-hand" onclick="app.startHandCycle()">
+                Nächste Hand
+            </button>
+        </div>
+    </div>
+
+    <div id="fullscreen-loader" class="fullscreen-overlay hidden">
+        <div id="loader-spinner" class="spinner"></div>
+        <div id="loader-success-msg" class="hidden" style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 10px;">✓</div>
+            <h2>Erfolgreich</h2>
+        </div>
+    </div>
+
+    <div id="rules-overlay-sheet" class="rules-overlay-panel">
+        <div class="rules-header">
+            <h2 style="font-size: 20px;">Übersicht: Deine aktuelle Hand</h2>
+            <button class="rules-close" onclick="app.closeRules()">✕</button>
+        </div>
+        <div class="rules-list" id="rules-content-list">
+            </div>
+    </div>
+
+    <div class="liquid-glass bottom-navbar" id="global-bottom-nav">
+        <div class="nav-item active" id="nav-tab-home" onclick="app.switchView('view-home')">
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home">
+            <span class="nav-text">Home</span>
+        </div>
+        <div class="nav-item" id="nav-tab-shop" onclick="app.switchView('view-shop')">
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/coins.png" alt="Shop">
+            <span class="nav-text">Vault & Shop</span>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /**
+     * Glass Poker - Main Application Architecture
+     */
+    const app = {
+        state: {
+            balance: 2500,
+            pot: 0,
+            stage: 0, 
+            deck: [],
+            board: [],
+            playerCards: [],
+            isPlayerTurn: false,
+            isHandActive: false,
+            
+            arenas: [
+                { id: 'garage', name: '1. Garage', icon: '🛠️', buyIn: 40, blinds: "1 / 2", callAmt: 2 },
+                { id: 'house_party', name: '2. House Party', icon: '🍕', buyIn: 200, blinds: "5 / 10", callAmt: 10 },
+                { id: 'casino', name: '3. Casino', icon: '🎰', buyIn: 1000, blinds: "25 / 50", callAmt: 50 },
+                { id: 'casino_high', name: '4. Casino High Table', icon: '🍸', buyIn: 4000, blinds: "100 / 200", callAmt: 200 },
+                { id: 'casino_vip', name: '5. Casino Private Lounge', icon: '🕴️', buyIn: 10000, blinds: "250 / 500", callAmt: 500 },
+                { id: 'penthouse', name: '6. Penthouse', icon: '🌆', buyIn: 50000, blinds: "1k / 2k", callAmt: 2000 },
+                { id: 'private_jet', name: '7. Private Jet', icon: '✈️', buyIn: 250000, blinds: "5k / 10k", callAmt: 10000 },
+                { id: 'private_island', name: '8. Private Island', icon: '🏝️', buyIn: 1000000, blinds: "25k / 50k", callAmt: 50000 }
+            ],
+            currentArenaIndex: 0,
+
+            shopItems: [
+                { id: 'rolex', name: 'Luxusuhr', icon: '⌚', price: 50000 },
+                { id: 'ring', name: 'Diamant Ring', icon: '💍', price: 100000 },
+                { id: 'car', name: 'Sportwagen', icon: '🏎️', price: 500000 },
+                { id: 'gold', name: 'Goldbarren', icon: '🪙', price: 1000000 },
+                { id: 'yacht', name: 'Superyacht', icon: '🛥️', price: 2500000 },
+                { id: 'mansion', name: 'Villa', icon: '🏡', price: 5000000 },
+                { id: 'picasso', name: 'Meisterwerk', icon: '🖼️', price: 10000000 },
+                { id: 'heli', name: 'Helikopter', icon: '🚁', price: 25000000 },
+                { id: 'space', name: 'Raumschiff', icon: '🚀', price: 100000000 }
+            ],
+            inventory: [],
+            
+            bots: [
+                { id: 1, name: "Emma", icon: "🦄", chips: 0, active: true },
+                { id: 2, name: "Marc", icon: "🧑🏽‍🦲", chips: 0, active: true },
+                { id: 3, name: "Gary", icon: "👨🏻‍🦰", chips: 0, active: true }
+            ],
+            
+            suits: ['♠','♥','♦','♣'],
+            vals: ['2','3','4','5','6','7','8','9','T','J','Q','K','A']
+        },
+
+        init: function() {
+            this.updateAllBalances();
+            this.bindSwipeToFoldGesture();
+            this.buildRulesList();
+        },
+
+        switchView: function(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+            
+            const nav = document.getElementById('global-bottom-nav');
+            if(viewId === 'view-home' || viewId === 'view-shop') {
+                nav.classList.remove('hidden');
+                document.getElementById('nav-tab-home').classList.remove('active');
+                document.getElementById('nav-tab-shop').classList.remove('active');
+                if(viewId === 'view-home') document.getElementById('nav-tab-home').classList.add('active');
+                if(viewId === 'view-shop') document.getElementById('nav-tab-shop').classList.add('active');
+            } else {
+                nav.classList.add('hidden');
+            }
+            this.updateAllBalances();
+        },
+
+        updateAllBalances: function() {
+            const formatted = this.state.balance.toLocaleString('de-DE');
+            document.getElementById('home-balance-display').innerText = formatted;
+            document.getElementById('game-balance-display').innerText = formatted;
+            document.getElementById('game-pot-display').innerText = this.state.pot.toLocaleString('de-DE');
+            
+            this.renderArenas();
+            this.renderInventory();
+            this.renderShop();
+        },
+
+        requestChips: function() {
+            const inputEl = document.getElementById('shop-input-val');
+            const amount = parseInt(inputEl.value);
+            if(isNaN(amount) || amount <= 0) return;
+
+            const loader = document.getElementById('fullscreen-loader');
+            const spinner = document.getElementById('loader-spinner');
+            const successMsg = document.getElementById('loader-success-msg');
+
+            loader.classList.remove('hidden');
+            spinner.classList.remove('hidden');
+            successMsg.classList.add('hidden');
+
+            setTimeout(() => {
+                spinner.classList.add('hidden');
+                successMsg.classList.remove('hidden');
+                this.state.balance += amount;
+                this.updateAllBalances();
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    inputEl.value = '';
+                    this.switchView('view-home');
+                }, 1500);
+            }, 1200);
+        },
+
+        buyItem: function(itemId) {
+            const item = this.state.shopItems.find(i => i.id === itemId);
+            if(this.state.balance < item.price) {
+                alert("Nicht genügend Chips für diesen Artikel!");
+                return;
+            }
+            this.state.balance -= item.price;
+            this.state.inventory.push(item.id);
+            this.updateAllBalances();
+        },
+
+        renderShop: function() {
+            const container = document.getElementById('shop-items-container');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            this.state.shopItems.forEach(item => {
+                const isOwned = this.state.inventory.includes(item.id);
+                const btnText = isOwned ? 'Gekauft' : `Kaufen`;
+                const btnClass = isOwned ? 'owned' : '';
+                container.innerHTML += `
+                    <div class="shop-item-card">
+                        <div class="shop-item-icon">${item.icon}</div>
+                        <div class="shop-item-name">${item.name}</div>
+                        <div class="shop-item-price">${item.price.toLocaleString('de-DE')} 🪙</div>
+                        <button class="shop-item-btn ${btnClass}" onclick="app.buyItem('${item.id}')">${btnText}</button>
+                    </div>
+                `;
+            });
+        },
+
+        renderInventory: function() {
+            const container = document.getElementById('inventory-container');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            if(this.state.inventory.length === 0) {
+                container.innerHTML = `<div class="inventory-item empty">Keine Items.<br>Besuche den Shop!</div>`;
+                return;
+            }
+
+            this.state.inventory.forEach(id => {
+                const item = this.state.shopItems.find(i => i.id === id);
+                container.innerHTML += `
+                    <div class="inventory-item">
+                        ${item.icon}
+                        <span>${item.name}</span>
+                    </div>
+                `;
+            });
+        },
+
+        renderArenas: function() {
+            const container = document.getElementById('arenas-list-container');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            this.state.arenas.forEach((arena, index) => {
+                const isLocked = this.state.balance < arena.buyIn;
+                const lockedClass = isLocked ? 'locked' : '';
+                const lockIcon = isLocked ? `<div class="arena-lock-icon">🔒</div>` : `<div class="arena-lock-icon" style="color: var(--accent);">▶</div>`;
+                
+                container.innerHTML += `
+                    <div class="arena-card ${lockedClass}" onclick="app.startGame(${index})">
+                        <div class="arena-icon">${arena.icon}</div>
+                        <div class="arena-info">
+                            <div class="arena-name">${arena.name}</div>
+                            <div class="arena-details">
+                                <span>Blinds: ${arena.blinds}</span>
+                                <span>•</span>
+                                <span class="arena-buyin">Buy-in: ${arena.buyIn.toLocaleString('de-DE')}</span>
+                            </div>
+                        </div>
+                        ${lockIcon}
+                    </div>
+                `;
+            });
+        },
+
+        startGame: function(arenaIndex) {
+            const arena = this.state.arenas[arenaIndex];
+            if(this.state.balance < arena.buyIn) {
+                alert("Deine Bankroll reicht nicht für diese Arena. Bitte lade Chips im Tresor auf.");
+                return;
+            }
+
+            this.state.currentArenaIndex = arenaIndex;
+            
+            this.state.balance -= arena.buyIn;
+            this.state.bots.forEach(b => {
+                b.chips = arena.buyIn;
+                b.active = true;
+                b.cards = null;
+            });
+            
+            this.switchView('view-game');
+            this.startHandCycle();
+        },
+
+        buildDeck: function() {
+            this.state.deck = [];
+            this.state.suits.forEach(s => {
+                this.state.vals.forEach(v => {
+                    this.state.deck.push({ s: s, v: v, isRed: (s === '♥' || s === '♦') });
+                });
+            });
+            for (let i = this.state.deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [this.state.deck[i], this.state.deck[j]] = [this.state.deck[j], this.state.deck[i]];
+            }
+        },
+
+        generateCardHTML: function(cardData, isFlipped = false) {
+            if (!cardData) {
+                return `
+                <div class="playing-card">
+                    <div class="card-flipper">
+                        <div class="card-face card-back"></div>
+                    </div>
+                </div>`;
+            }
+            const redClass = cardData.isRed ? 'suit-red' : '';
+            return `
+            <div class="playing-card ${isFlipped ? 'flipped' : ''}">
+                <div class="card-flipper">
+                    <div class="card-face card-back"></div>
+                    <div class="card-face card-front ${redClass}">
+                        <div>${cardData.v}</div>
+                        <div class="card-suit-icon">${cardData.s}</div>
+                    </div>
+                </div>
+            </div>`;
+        },
+
+        renderBotsUI: function() {
+            const container = document.getElementById('bots-container');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            this.state.bots.forEach(b => {
+                const foldedClass = b.active ? '' : 'folded';
+                let cardsHtml = '';
+                if(b.active && b.cards) {
+                    let isFlipped = !this.state.isHandActive; // flip if hand ended
+                    cardsHtml = `
+                        <div class="opp-hole-cards" id="bot-cards-${b.id}">
+                            ${this.generateCardHTML(b.cards[0], isFlipped)}
+                            ${this.generateCardHTML(b.cards[1], isFlipped)}
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML += `
+                    <div class="liquid-glass opp-seat ${foldedClass}" id="bot-node-${b.id}">
+                        ${cardsHtml}
+                        <div class="opp-avatar">${b.icon}</div>
+                        <div class="opp-chips">${b.chips.toLocaleString('de-DE')}</div>
+                        <div class="opp-action-badge" id="bot-action-${b.id}">Action</div>
+                    </div>
+                `;
+            });
+        },
+
+        renderBoardUI: function(flipDelayMs = 0) {
+            const container = document.getElementById('board-container');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 5; i++) {
+                let isNewCard = i >= this.state.board.length - (this.state.stage === 1 ? 3 : 1);
+                if (i < this.state.board.length) {
+                    container.innerHTML += this.generateCardHTML(this.state.board[i], !isNewCard);
+                } else {
+                    container.innerHTML += this.generateCardHTML(null);
+                }
+            }
+
+            setTimeout(() => {
+                const cards = document.querySelectorAll('#board-container .playing-card:not(.flipped)');
+                cards.forEach((cardEl, idx) => {
+                    if(cardEl.querySelector('.card-front')) {
+                        setTimeout(() => cardEl.classList.add('flipped'), idx * 200);
+                    }
+                });
+            }, flipDelayMs);
+        },
+
+        startHandCycle: function() {
+            this.buildDeck();
+            this.state.board = [];
+            this.state.pot = 0;
+            this.state.stage = 0;
+            this.state.isHandActive = true;
+            
+            this.state.bots.forEach(b => {
+                if(b.chips > 0) {
+                    b.active = true;
+                    b.cards = [this.state.deck.pop(), this.state.deck.pop()];
+                }
+                else {
+                    b.active = false;
+                    b.cards = null;
+                }
+            });
+
+            const pocketDiv = document.getElementById('player-pocket-cards');
+            pocketDiv.classList.remove('is-folding');
+            pocketDiv.style.transform = '';
+            pocketDiv.style.opacity = '1';
+            
+            this.state.playerCards = [this.state.deck.pop(), this.state.deck.pop()];
+            pocketDiv.innerHTML = this.generateCardHTML(this.state.playerCards[0], true) + 
+                                  this.generateCardHTML(this.state.playerCards[1], true);
+
+            document.getElementById('btn-next-hand').classList.add('hidden');
+            document.getElementById('player-action-controls').classList.remove('hidden');
+            
+            const arena = this.state.arenas[this.state.currentArenaIndex];
+            document.getElementById('btn-action-call').innerText = `Call ${arena.callAmt.toLocaleString('de-DE')}`;
+            document.getElementById('btn-action-raise').innerText = `Raise ${(arena.callAmt * 2).toLocaleString('de-DE')}`;
+            
+            this.updateProbabilityDisplay();
+            this.renderBotsUI();
+            this.renderBoardUI();
+            this.updateAllBalances();
+            
+            this.togglePlayerTurn(true);
+        },
+
+        togglePlayerTurn: function(isActive) {
+            this.state.isPlayerTurn = isActive;
+            const controlRow = document.getElementById('player-action-controls');
+            const msgObj = document.getElementById('game-status-msg');
+            
+            if (isActive) {
+                controlRow.classList.remove('disabled');
+                msgObj.innerText = "Wische hoch zum Folden";
+            } else {
+                controlRow.classList.add('disabled');
+                msgObj.innerText = "Gegner am Zug...";
+            }
+        },
+
+        bindSwipeToFoldGesture: function() {
+            const dragZone = document.getElementById('swipe-drag-zone');
+            const cardsTarget = document.getElementById('player-pocket-cards');
+            
+            let isDragging = false;
+            let startY = 0;
+
+            dragZone.addEventListener('pointerdown', (e) => {
+                if (!this.state.isPlayerTurn || !this.state.isHandActive) return;
+                isDragging = true;
+                startY = e.clientY;
+                cardsTarget.style.transition = 'none';
+                dragZone.setPointerCapture(e.pointerId);
+            });
+
+            dragZone.addEventListener('pointermove', (e) => {
+                if (!isDragging) return;
+                let deltaY = e.clientY - startY;
+                if (deltaY < 0) cardsTarget.style.transform = `translateY(${deltaY}px)`;
+            });
+
+            dragZone.addEventListener('pointerup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                let deltaY = e.clientY - startY;
+                
+                cardsTarget.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s';
+                
+                if (deltaY < -90) {
+                    cardsTarget.classList.add('is-folding');
+                    cardsTarget.style.transform = `translateY(-300px) rotateX(60deg) scale(0.5)`;
+                    setTimeout(() => this.handlePlayerAction('fold'), 300);
+                } else {
+                    cardsTarget.style.transform = 'translateY(0)';
+                }
+                
+                dragZone.releasePointerCapture(e.pointerId);
+            });
+        },
+
+        handlePlayerAction: function(actionType) {
+            if (!this.state.isPlayerTurn || !this.state.isHandActive) return;
+            this.togglePlayerTurn(false);
+
+            if (actionType === 'fold') {
+                document.getElementById('player-pocket-cards').classList.add('is-folding');
+                this.state.isHandActive = false;
+                document.getElementById('game-status-msg').innerText = "Du hast gefoldet.";
+                setTimeout(() => this.endHandCycle(), 800);
+                return;
+            }
+
+            const arena = this.state.arenas[this.state.currentArenaIndex];
+            let cost = (actionType === 'call') ? arena.callAmt : arena.callAmt * 2;
+            
+            if (this.state.balance < cost) {
+                alert("Nicht genügend Chips!");
+                this.togglePlayerTurn(true);
+                return;
+            }
+
+            this.state.balance -= cost;
+            this.state.pot += cost;
+            this.updateAllBalances();
+
+            this.executeAutomatedBotTurns();
+        },
+
+        executeAutomatedBotTurns: function() {
+            let sequenceDelay = 400;
+            const arena = this.state.arenas[this.state.currentArenaIndex];
+            
+            this.state.bots.forEach(bot => {
+                if (!bot.active) return;
+                
+                setTimeout(() => {
+                    const seatEl = document.getElementById(`bot-node-${bot.id}`);
+                    seatEl.classList.add('active-turn');
+                    
+                    let decision = "Call";
+                    let cost = arena.callAmt;
+                    
+                    if (Math.random() > 0.85 && this.state.stage > 0) {
+                        decision = "Fold";
+                        cost = 0;
+                        bot.active = false;
+                    } else if (Math.random() > 0.75) {
+                        decision = "Raise";
+                        cost = arena.callAmt * 2;
+                    }
+                    
+                    if (cost > bot.chips) cost = bot.chips;
+                    bot.chips -= cost;
+                    this.state.pot += cost;
+                    
+                    const badge = document.getElementById(`bot-action-${bot.id}`);
+                    badge.innerText = decision;
+                    badge.classList.add('show');
+                    
+                    if (decision === 'Fold') {
+                        seatEl.classList.add('folded');
+                        let cardsDiv = document.getElementById(`bot-cards-${bot.id}`);
+                        if(cardsDiv) cardsDiv.style.opacity = '0.3';
+                    }
+                    this.updateAllBalances();
+                    
+                    setTimeout(() => {
+                        badge.classList.remove('show');
+                        seatEl.classList.remove('active-turn');
+                        seatEl.querySelector('.opp-chips').innerText = bot.chips.toLocaleString('de-DE');
+                    }, 600);
+                    
+                }, sequenceDelay);
+                
+                sequenceDelay += 800;
+            });
+
+            setTimeout(() => this.advanceBoardStage(), sequenceDelay + 200);
+        },
+
+        advanceBoardStage: function() {
+            if (!this.state.isHandActive) return;
+            this.state.stage++;
+            let flipAnimDelay = 100;
+            
+            if (this.state.stage === 1) {
+                this.state.board.push(this.state.deck.pop(), this.state.deck.pop(), this.state.deck.pop());
+            } else if (this.state.stage === 2) {
+                this.state.board.push(this.state.deck.pop());
+            } else if (this.state.stage === 3) {
+                this.state.board.push(this.state.deck.pop());
+            } else {
+                this.endHandCycle();
+                return;
+            }
+
+            this.updateProbabilityDisplay();
+            this.renderBoardUI(flipAnimDelay);
+            
+            setTimeout(() => this.togglePlayerTurn(true), flipAnimDelay + 800);
+        },
+
+        evaluateHand: function(holeCards, boardCards) {
+            const allCards = [...holeCards, ...boardCards].map(c => {
+                let rank = c.v;
+                if(rank === 'T') rank = 10;
+                else if(rank === 'J') rank = 11;
+                else if(rank === 'Q') rank = 12;
+                else if(rank === 'K') rank = 13;
+                else if(rank === 'A') rank = 14;
+                else rank = parseInt(rank);
+                return { v: rank, s: c.s };
+            });
+            
+            allCards.sort((a,b) => b.v - a.v);
+
+            let suits = {};
+            let ranks = {};
+            allCards.forEach(c => {
+                suits[c.s] = suits[c.s] || [];
+                suits[c.s].push(c);
+                ranks[c.v] = ranks[c.v] || [];
+                ranks[c.v].push(c);
+            });
+
+            let isFlush = false, flushCards = [];
+            for (let s in suits) {
+                if(suits[s].length >= 5) {
+                    isFlush = true;
+                    flushCards = suits[s].slice(0,5);
+                    break;
+                }
+            }
+
+            const getStraight = (cards) => {
+                let uniqueRanks = [...new Set(cards.map(c=>c.v))].sort((a,b)=>b-a);
+                if(uniqueRanks.includes(14)) uniqueRanks.push(1);
+                
+                let count = 1;
+                for(let i=0; i<uniqueRanks.length-1; i++) {
+                    if(uniqueRanks[i] - 1 === uniqueRanks[i+1]) {
+                        count++;
+                        if(count === 5) return uniqueRanks[i-3];
+                    } else if (uniqueRanks[i] === uniqueRanks[i+1]) {
+                        // skip
+                    } else {
+                        count = 1;
+                    }
+                }
+                return 0;
+            };
+
+            let straightHigh = getStraight(allCards);
+            let straightFlushHigh = isFlush ? getStraight(suits[flushCards[0].s]) : 0;
+
+            let rankCounts = Object.entries(ranks).map(([r, cards]) => ({rank: parseInt(r), count: cards.length}));
+            rankCounts.sort((a,b) => b.count - a.count || b.rank - a.rank);
+
+            let score = 0;
+            let handName = "";
+
+            if(straightFlushHigh > 0) {
+                score = 8000000 + straightFlushHigh;
+                handName = straightFlushHigh === 14 ? "Royal Flush" : "Straight Flush";
+            } else if (rankCounts[0].count === 4) {
+                score = 7000000 + rankCounts[0].rank * 100 + rankCounts[1].rank;
+                handName = "Vierling";
+            } else if (rankCounts[0].count === 3 && rankCounts[1] && rankCounts[1].count >= 2) {
+                score = 6000000 + rankCounts[0].rank * 100 + rankCounts[1].rank;
+                handName = "Full House";
+            } else if (isFlush) {
+                score = 5000000 + flushCards[0].v*10000 + flushCards[1].v*1000 + flushCards[2].v*100 + flushCards[3].v*10 + flushCards[4].v;
+                handName = "Flush";
+            } else if (straightHigh > 0) {
+                score = 4000000 + straightHigh;
+                handName = "Straße";
+            } else if (rankCounts[0].count === 3) {
+                score = 3000000 + rankCounts[0].rank * 10000;
+                let kickers = allCards.filter(c => c.v !== rankCounts[0].rank).slice(0,2);
+                score += (kickers[0]?.v || 0) * 100 + (kickers[1]?.v || 0);
+                handName = "Drilling";
+            } else if (rankCounts[0].count === 2 && rankCounts[1] && rankCounts[1].count >= 2) {
+                score = 2000000 + rankCounts[0].rank * 10000 + rankCounts[1].rank * 100;
+                let kickers = allCards.filter(c => c.v !== rankCounts[0].rank && c.v !== rankCounts[1].rank).slice(0,1);
+                if(kickers.length) score += kickers[0].v;
+                handName = "Two Pair";
+            } else if (rankCounts[0].count === 2) {
+                score = 1000000 + rankCounts[0].rank * 10000;
+                let kickers = allCards.filter(c => c.v !== rankCounts[0].rank).slice(0,3);
+                score += (kickers[0]?.v || 0) * 100 + (kickers[1]?.v || 0) * 10 + (kickers[2]?.v || 0);
+                handName = "Paar";
+            } else {
+                score = (allCards[0]?.v || 0) * 10000 + 
+                        (allCards[1]?.v || 0) * 1000 + 
+                        (allCards[2]?.v || 0) * 100 + 
+                        (allCards[3]?.v || 0) * 10 + 
+                        (allCards[4]?.v || 0);
+                handName = "High Card";
+            }
+
+            return { score, handName };
+        },
+
+        endHandCycle: function() {
+            this.state.isHandActive = false;
+            document.getElementById('player-action-controls').classList.add('hidden');
+            document.getElementById('btn-next-hand').classList.remove('hidden');
+
+            const msgEl = document.getElementById('game-status-msg');
+
+            if (document.getElementById('player-pocket-cards').classList.contains('is-folding')) {
+                msgEl.innerText = "Du hast gefoldet. Gegner gewinnt.";
+                const activeBots = this.state.bots.filter(b => b.active);
+                if (activeBots.length > 0) activeBots[0].chips += this.state.pot;
+                this.state.pot = 0;
+                this.updateAllBalances();
+                this.renderBotsUI();
+                return;
+            }
+
+            let activeBots = this.state.bots.filter(b => b.active);
+            let bestBotScore = 0;
+            let bestBotHand = null;
+            let bestBot = null;
+            
+            this.renderBotsUI();
+
+            activeBots.forEach(bot => {
+                let evalResult = this.evaluateHand(bot.cards, this.state.board);
+                if(evalResult.score > bestBotScore) {
+                    bestBotScore = evalResult.score;
+                    bestBotHand = evalResult.handName;
+                    bestBot = bot;
+                }
+                
+                let cardsDiv = document.getElementById(`bot-cards-${bot.id}`);
+                if(cardsDiv) {
+                    setTimeout(() => {
+                        cardsDiv.querySelectorAll('.playing-card').forEach(c => c.classList.add('flipped'));
+                    }, 100);
+                }
+            });
+
+            let myEval = this.evaluateHand(this.state.playerCards, this.state.board);
+
+            setTimeout(() => {
+                if(activeBots.length === 0) {
+                    msgEl.innerText = `Alle Gegner gefoldet! Du gewinnst.`;
+                    this.state.balance += this.state.pot;
+                } else {
+                    if (bestBotScore > myEval.score) {
+                        msgEl.innerText = `${bestBot.name} gewinnt mit ${bestBotHand}. (${myEval.handName} verliert)`;
+                        bestBot.chips += this.state.pot;
+                    } else if (myEval.score > bestBotScore) {
+                        msgEl.innerText = `Du gewinnst mit ${myEval.handName}!`;
+                        this.state.balance += this.state.pot;
+                    } else {
+                        msgEl.innerText = `Split Pot! Beide haben ${myEval.handName}.`;
+                        this.state.balance += Math.floor(this.state.pot / 2);
+                        bestBot.chips += Math.ceil(this.state.pot / 2);
+                    }
+                }
+
+                this.state.pot = 0;
+                this.updateAllBalances();
+                
+                this.state.bots.forEach(b => {
+                    let el = document.getElementById(`bot-node-${b.id}`);
+                    if(el) {
+                        let chipEl = el.querySelector('.opp-chips');
+                        if(chipEl) chipEl.innerText = b.chips.toLocaleString('de-DE');
+                    }
+                });
+
+            }, 1200);
+        },
+
+        updateProbabilityDisplay: function() {
+            let p = 0;
+            if (this.state.stage === 0) p = Math.floor(Math.random() * 20) + 20; 
+            if (this.state.stage === 1) p = Math.floor(Math.random() * 30) + 35; 
+            if (this.state.stage === 2) p = Math.floor(Math.random() * 30) + 50; 
+            if (this.state.stage === 3) p = Math.floor(Math.random() * 20) + 75; 
+            document.getElementById('win-probability-display').innerText = `${p}%`;
+
+            if (this.state.playerCards && this.state.playerCards.length === 2) {
+                let evalResult = this.evaluateHand(this.state.playerCards, this.state.board);
+                let liveDisplay = document.getElementById('live-hand-display');
+                if (liveDisplay) {
+                    liveDisplay.innerText = evalResult.handName;
+                }
+                this.highlightCurrentRule(evalResult.handName);
+            }
+        },
+
+        highlightCurrentRule: function(currentHandName) {
+            const listContainer = document.getElementById('rules-content-list');
+            if(!listContainer) return;
+            const items = listContainer.querySelectorAll('.rule-item');
+            items.forEach(item => {
+                item.classList.remove('active-rule');
+                const nameSpan = item.querySelector('.rule-text span');
+                if (nameSpan && nameSpan.innerText === currentHandName) {
+                    item.classList.add('active-rule');
+                }
+            });
+        },
+
+        handRankingsData: [
+            { name: "Royal Flush", desc: "A-K-Q-J-10 (gleiche Farbe)", ex: [{v:'A',s:'♠'}, {v:'K',s:'♠'}, {v:'Q',s:'♠'}, {v:'J',s:'♠'}, {v:'T',s:'♠'}] },
+            { name: "Straight Flush", desc: "5 in Folge (gleiche Farbe)", ex: [{v:'9',s:'♥'}, {v:'8',s:'♥'}, {v:'7',s:'♥'}, {v:'6',s:'♥'}, {v:'5',s:'♥'}] },
+            { name: "Vierling", desc: "4 gleiche Werte", ex: [{v:'A',s:'♠'}, {v:'A',s:'♥'}, {v:'A',s:'♦'}, {v:'A',s:'♣'}, {v:'K',s:'♦'}] },
+            { name: "Full House", desc: "3 Gleiche + 1 Paar", ex: [{v:'Q',s:'♠'}, {v:'Q',s:'♥'}, {v:'Q',s:'♦'}, {v:'T',s:'♣'}, {v:'T',s:'♦'}] },
+            { name: "Flush", desc: "5 Karten derselben Farbe", ex: [{v:'A',s:'♦'}, {v:'J',s:'♦'}, {v:'8',s:'♦'}, {v:'5',s:'♦'}, {v:'2',s:'♦'}] },
+            { name: "Straße", desc: "5 Karten in Folge", ex: [{v:'8',s:'♠'}, {v:'7',s:'♥'}, {v:'6',s:'♦'}, {v:'5',s:'♣'}, {v:'4',s:'♠'}] },
+            { name: "Drilling", desc: "3 gleiche Werte", ex: [{v:'J',s:'♠'}, {v:'J',s:'♥'}, {v:'J',s:'♣'}, {v:'A',s:'♦'}, {v:'2',s:'♣'}] },
+            { name: "Two Pair", desc: "Zwei Paare", ex: [{v:'T',s:'♠'}, {v:'T',s:'♥'}, {v:'9',s:'♦'}, {v:'9',s:'♣'}, {v:'A',s:'♠'}] },
+            { name: "Paar", desc: "Ein Paar", ex: [{v:'A',s:'♠'}, {v:'A',s:'♥'}, {v:'K',s:'♦'}, {v:'T',s:'♣'}, {v:'4',s:'♦'}] },
+            { name: "High Card", desc: "Höchste Karte gewinnt", ex: [{v:'A',s:'♠'}, {v:'K',s:'♥'}, {v:'5',s:'♦'}, {v:'4',s:'♣'}, {v:'2',s:'♠'}] }
+        ],
+
+        buildRulesList: function() {
+            const listContainer = document.getElementById('rules-content-list');
+            listContainer.innerHTML = '';
+
+            this.handRankingsData.forEach(rule => {
+                let cardsHtml = '';
+                rule.ex.forEach(c => {
+                    let isRed = (c.s === '♥' || c.s === '♦');
+                    cardsHtml += `<div class="mini-card ${isRed ? 'red' : ''}">${c.v}${c.s}</div>`;
+                });
+
+                listContainer.innerHTML += `
+                    <div class="rule-item">
+                        <div class="rule-text">
+                            <span>${rule.name}</span>
+                            <div class="mini-cards-row">${cardsHtml}</div>
+                        </div>
+                        <div class="rule-desc">${rule.desc}</div>
+                    </div>
+                `;
+            });
+        },
+
+        openRules: function() {
+            document.getElementById('rules-overlay-sheet').classList.add('open');
+            // If live hand exists, we can scroll it into view
+            setTimeout(() => {
+                const active = document.querySelector('.active-rule');
+                if(active) active.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }, 100);
+        },
+
+        closeRules: function() {
+            document.getElementById('rules-overlay-sheet').classList.remove('open');
+        }
+    };
+
+    app.init();
+
+</script>
+</body>
+</html>
