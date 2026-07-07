@@ -1,46 +1,46 @@
 # Glass Poker
 
-Glass Poker ist eine minimalistische, einhändig bedienbare Web-App für Poker (Texas Hold'em) gegen KI-Gegner. Das gesamte Interface basiert auf einem modernen, hochauflösenden Liquid-Glass-Design (Glassmorphismus), welches durch semi-transparente Flächen, Unschärfe-Effekte und weiche Kanten eine saubere Tiefenwirkung erzeugt.
+Glass Poker is a minimalist, single-handed web application for playing poker (Texas Hold'em) against AI opponents. The entire interface is built upon a modern, high-resolution liquid glass design (glassmorphism), creating a clean depth effect through semi-transparent surfaces, background blur, and soft borders.
 
 ## Features
 
 ### Liquid Glass Interface
-Das gesamte UI verzichtet auf klassische Neon-Effekte oder ablenkende Banner. Alle Menüs, Knöpfe, Overlays und die Navigation sind als funktionale Glaselemente mit Backdrop-Filter implementiert. Die Navigations-Icons sind einheitlich in weiß gehalten.
+The entire user interface completely dispenses with classic neon effects or distracting banners. All menus, buttons, overlays, and the navigation are implemented as functional glass elements using backdrop filters. The navigation icons are uniformly designed in pure white.
 
-### Automatisiertes Gameplay
-Der Spieler agiert immer als Erster (Pre-Flop, Flop, Turn, River). Nach der Aktion des Spielers führen alle aktiven KI-Bots ihre Züge vollautomatisch nacheinander mit einer kurzen zeitlichen Verzögerung aus. Nach Abschluss der Runde wird die nächste Phase geladen, ohne dass manuelle Zwischenschritte erforderlich sind.
+### Automated Gameplay
+The player always acts first in every betting round (Pre-Flop, Flop, Turn, River). Following the player's action, all active AI bots execute their moves fully automatically one after another with a brief built-in delay. Once the round is completed, the next phase loads seamlessly without requiring manual intermediate steps.
 
-### Swipe-to-Fold Gestensteuerung
-Klassische Fold-Buttons wurden entfernt. Das Ablegen schlechter Blätter erfolgt über eine direkte Wischgeste. Die Karten werden per Touch oder Zeiger nach oben gezogen, fliegen visuell auf den Tisch und lösen die Fold-Aktion aus. Die Umsetzung basiert auf PointerEvents mit Pointer-Capture zur Verhinderung von Browser-Scrolling.
+### Swipe-to-Fold Gesture Control
+Traditional fold buttons have been entirely removed. Discarding weak hands is done via a direct swipe gesture. Cards are dragged upward by touch or pointer, visually flying onto the table to trigger the fold action. This is achieved using the PointerEvents API with pointer capture to prevent accidental browser scrolling.
 
-### Taktische HUD-Anzeige
-Direkt neben den Hauptaktionen (Call und Raise) befindet sich eine permanente Informationsbox, welche die aktuelle statistische Gewinnwahrscheinlichkeit in Echtzeit für die jeweilige Spielphase ausgibt.
+### Tactical HUD Display
+Located directly next to the primary action buttons (Call and Raise) is a permanent informational box. This box calculates and displays your statistical win probability in real time for the current phase of the game.
 
-### Visuelles Regel-Overlay
-Ein Klick auf die Gemeinschaftskarten (Community Board) öffnet ein bildschirmfüllendes Glass-Panel. Dieses enthält eine Übersicht aller Poker-Hand-Kombinationen, visualisiert durch miniaturisierte, gerenderte Spielkarten als direkte Beispielbilder.
+### Visual Rules Overlay
+Clicking on the community cards opens a full-screen glass panel. This overlay contains a comprehensive guide to all poker hand rankings, visualized with miniature rendered playing cards as direct image examples.
 
-### Vollwertiges Tisch-Setup & Bankroll-Tresor
-Vor Spielbeginn ermöglicht ein Schieberegler die Anpassung der Stakes (Blinds) und des Buy-Ins. Über den Tresor-Bereich (Vault) steht ein simuliertes Auflade-System zur Verfügung, das den Erhalt neuer Test-Chips über eine bildschirmfüllende Lade- und Bestätigungsanimation abbildet.
+### Full Table Setup & Bankroll Vault
+Before entering a game, a glass slider allows you to easily adjust the stakes (blinds) and view the corresponding buy-in. Through the vault area, a simulated top-up system is available, displaying the acquisition of new test chips with a full-screen loading and confirmation animation.
 
-## Technische Details
+## Technical Details
 
-* Architektur: Single-Page-Application (SPA)
-* Technologien: HTML5, CSS3 (Flexbox, CSS Grid, 3D-Transforms), JavaScript (Vanilla ES6)
-* Eingabe-Handling: PointerEvents API zur präzisen Gesten-Erkennung auf mobilen Endgeräten und Desktop-Browsern
-* Design-System: Reiner Glassmorphismus über fortgeschrittene CSS-Eigenschaften (backdrop-filter)
+* Architecture: Single-Page Application (SPA)
+* Technologies: HTML5, CSS3 (Flexbox, CSS Grid, 3D Transforms), JavaScript (Vanilla ES6)
+* Input Handling: PointerEvents API for precise gesture recognition on mobile devices and desktop browsers
+* Design System: Pure glassmorphism via advanced CSS properties (backdrop-filter)
 
-## Installation und Start
+## Installation and Setup
 
-Da das Projekt ausschließlich aus Client-seitigem Code besteht, ist keine Installation oder Server-Umgebung notwendig.
+Since the project consists entirely of client-side code, no installation or local server environment is required.
 
-1. Klone das Repository:
+1. Clone the repository:
    git clone https://github.com/poicpp/glass-poker.git
 
-2. Navigiere in das Verzeichnis:
+2. Navigate into the directory:
    cd glass-poker
 
-3. Öffne die Datei index.html direkt in einem modernen Webbrowser deiner Wahl.
+3. Open the index.html file directly in any modern web browser of your choice.
 
-## Lizenz
+## License
 
-Dieses Projekt ist unter der MIT-Lizenz lizenziert. Details dazu finden sich in der LICENSE-Datei.
+This project is licensed under the MIT License. See the LICENSE file for details.
