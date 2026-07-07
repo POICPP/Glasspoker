@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -23,7 +23,7 @@
             /* Text & Accents */
             --text-main: #ffffff;
             --text-muted: #a0a0a5;
-            --accent: #a87ffb;
+            --accent: #b5b5b5;
             --danger: #ff453a;
             
             /* Layout */
@@ -169,36 +169,22 @@
         }
 
         /* Inventory Items */
-        .inventory-row {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .inventory-row::-webkit-scrollbar {
-            height: 4px;
-        }
-        .inventory-row::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-            border-radius: 4px;
-        }
-        .inventory-row::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
         }
         .inventory-item {
             background: rgba(255,255,255,0.05);
             border: 1px solid var(--glass-border);
             border-radius: var(--radius-md);
-            padding: 10px;
+            padding: 15px 5px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 80px;
-            font-size: 28px;
-            flex-shrink: 0;
+            justify-content: center;
+            font-size: 32px;
         }
         .inventory-item span { 
             font-size: 9px; 
@@ -215,6 +201,7 @@
             align-items: center; 
             justify-content: center; 
             width: 100%;
+            padding: 20px;
         }
 
         /* ==========================================================================
@@ -680,48 +667,54 @@
             <img src="https://i.postimg.cc/TwCYL0cK/Glass-Poker-Logo.png" alt="Logo">
         </div>
         
-        <div class="balance-hero" id="home-balance-display">2.500</div>
+        <div class="balance-hero" id="home-balance-display">2,500</div>
         
-        <h3 style="margin-left: 10px; margin-bottom: 10px; margin-top: 5px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Wähle deinen Tisch</h3>
+        <h3 style="margin-left: 10px; margin-bottom: 10px; margin-top: 10px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Select Arena</h3>
         <div class="arenas-list" id="arenas-list-container">
             <!-- populated by JS -->
         </div>
 
-        <h3 style="margin-left: 10px; margin-bottom: 10px; margin-top: 10px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Dein Inventar</h3>
-        <div class="inventory-row" id="inventory-container">
+        <h3 style="margin-left: 10px; margin-bottom: 10px; margin-top: 20px; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Your Assets</h3>
+        <div class="inventory-grid" id="inventory-container">
             <!-- Items appear here -->
         </div>
+
+        <!-- Explicit spacer to ensure scrolling past bottom navbar on mobile Safari -->
+        <div style="height: 120px; flex-shrink: 0; width: 100%;"></div>
     </div>
 
     <div id="view-shop" class="view hidden">
         <div class="header">
             <button class="back-btn" onclick="app.switchView('view-home')">←</button>
-            <h2 style="font-size: 20px; font-weight: 600;">Tresor & Shop</h2>
+            <h2 style="font-size: 20px; font-weight: 600;">Vault & Shop</h2>
             <div style="width: 40px;"></div>
         </div>
         
         <div style="text-align: center; margin-bottom: 20px;">
             <div style="font-size: 50px; margin-bottom: 10px;">🪙</div>
-            <p style="color: var(--text-muted); font-size: 14px;">Lade deine Test-Chips kostenlos auf.</p>
+            <p style="color: var(--text-muted); font-size: 14px;">Reload your test chips for free.</p>
         </div>
 
         <div class="shop-input-area" style="margin-bottom: 20px;">
-            <input type="number" id="shop-input-val" class="glass-input" placeholder="Betrag..." min="100">
+            <input type="number" id="shop-input-val" class="glass-input" placeholder="Amount..." min="100">
         </div>
         <button class="liquid-glass-btn" style="padding: 20px; font-size: 18px; width: 100%;" onclick="app.requestChips()">
-            Chips Anfordern
+            Request Chips
         </button>
 
-        <h3 style="margin-top: 50px; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Luxus Boutique</h3>
+        <h3 style="margin-top: 50px; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Luxury Boutique</h3>
         <div class="shop-items-grid" id="shop-items-container">
             <!-- populated by JS -->
         </div>
+
+        <!-- Explicit spacer to ensure scrolling past bottom navbar on mobile Safari -->
+        <div style="height: 120px; flex-shrink: 0; width: 100%;"></div>
     </div>
 
     <div id="view-game" class="view hidden">
         <div class="header" style="margin-bottom: 10px;">
             <button class="back-btn" onclick="app.switchView('view-home')">←</button>
-            <div style="font-weight: bold; font-size: 18px;" id="game-balance-display">2.500</div>
+            <div style="font-weight: bold; font-size: 18px;" id="game-balance-display">2,500</div>
             <div style="width: 40px;"></div>
         </div>
 
@@ -737,7 +730,7 @@
             </div>
 
         <div class="player-dashboard">
-            <div class="system-message" id="game-status-msg">Wische hoch zum Folden</div>
+            <div class="system-message" id="game-status-msg">Swipe up to fold</div>
             
             <div class="touch-swipe-zone" id="swipe-drag-zone">
                 <div class="pocket-cards" id="player-pocket-cards">
@@ -755,7 +748,7 @@
             </div>
             
             <button class="liquid-glass-btn btn-next-hand hidden" id="btn-next-hand" onclick="app.startHandCycle()">
-                Nächste Hand
+                Next Hand
             </button>
         </div>
     </div>
@@ -764,13 +757,13 @@
         <div id="loader-spinner" class="spinner"></div>
         <div id="loader-success-msg" class="hidden" style="text-align: center;">
             <div style="font-size: 48px; margin-bottom: 10px;">✓</div>
-            <h2>Erfolgreich</h2>
+            <h2>Success</h2>
         </div>
     </div>
 
     <div id="rules-overlay-sheet" class="rules-overlay-panel">
         <div class="rules-header">
-            <h2 style="font-size: 20px;">Übersicht: Deine aktuelle Hand</h2>
+            <h2 style="font-size: 20px;">Overview: Your Current Hand</h2>
             <button class="rules-close" onclick="app.closeRules()">✕</button>
         </div>
         <div class="rules-list" id="rules-content-list">
@@ -809,8 +802,8 @@
                 { id: 'garage', name: '1. Garage', icon: '🛠️', buyIn: 40, blinds: "1 / 2", callAmt: 2 },
                 { id: 'house_party', name: '2. House Party', icon: '🍕', buyIn: 200, blinds: "5 / 10", callAmt: 10 },
                 { id: 'casino', name: '3. Casino', icon: '🎰', buyIn: 1000, blinds: "25 / 50", callAmt: 50 },
-                { id: 'casino_high', name: '4. Casino High Table', icon: '🍸', buyIn: 4000, blinds: "100 / 200", callAmt: 200 },
-                { id: 'casino_vip', name: '5. Casino Private Lounge', icon: '🕴️', buyIn: 10000, blinds: "250 / 500", callAmt: 500 },
+                { id: 'casino_high', name: '4. High Table', icon: '🍸', buyIn: 4000, blinds: "100 / 200", callAmt: 200 },
+                { id: 'casino_vip', name: '5. VIP Lounge', icon: '🕴️', buyIn: 10000, blinds: "250 / 500", callAmt: 500 },
                 { id: 'penthouse', name: '6. Penthouse', icon: '🌆', buyIn: 50000, blinds: "1k / 2k", callAmt: 2000 },
                 { id: 'private_jet', name: '7. Private Jet', icon: '✈️', buyIn: 250000, blinds: "5k / 10k", callAmt: 10000 },
                 { id: 'private_island', name: '8. Private Island', icon: '🏝️', buyIn: 1000000, blinds: "25k / 50k", callAmt: 50000 }
@@ -818,15 +811,15 @@
             currentArenaIndex: 0,
 
             shopItems: [
-                { id: 'rolex', name: 'Luxusuhr', icon: '⌚', price: 50000 },
-                { id: 'ring', name: 'Diamant Ring', icon: '💍', price: 100000 },
-                { id: 'car', name: 'Sportwagen', icon: '🏎️', price: 500000 },
-                { id: 'gold', name: 'Goldbarren', icon: '🪙', price: 1000000 },
+                { id: 'rolex', name: 'Luxury Watch', icon: '⌚', price: 50000 },
+                { id: 'ring', name: 'Diamond Ring', icon: '💍', price: 100000 },
+                { id: 'car', name: 'Sports Car', icon: '🏎️', price: 500000 },
+                { id: 'gold', name: 'Gold Bar', icon: '🪙', price: 1000000 },
                 { id: 'yacht', name: 'Superyacht', icon: '🛥️', price: 2500000 },
-                { id: 'mansion', name: 'Villa', icon: '🏡', price: 5000000 },
-                { id: 'picasso', name: 'Meisterwerk', icon: '🖼️', price: 10000000 },
-                { id: 'heli', name: 'Helikopter', icon: '🚁', price: 25000000 },
-                { id: 'space', name: 'Raumschiff', icon: '🚀', price: 100000000 }
+                { id: 'mansion', name: 'Mansion', icon: '🏡', price: 5000000 },
+                { id: 'picasso', name: 'Lisas Mone', icon: '🖼️', price: 10000000 },
+                { id: 'heli', name: 'Helicopter', icon: '🚁', price: 25000000 },
+                { id: 'space', name: 'Space Company X', icon: '🚀', price: 100000000 }
             ],
             inventory: [],
             
@@ -864,10 +857,10 @@
         },
 
         updateAllBalances: function() {
-            const formatted = this.state.balance.toLocaleString('de-DE');
+            const formatted = this.state.balance.toLocaleString('en-US');
             document.getElementById('home-balance-display').innerText = formatted;
             document.getElementById('game-balance-display').innerText = formatted;
-            document.getElementById('game-pot-display').innerText = this.state.pot.toLocaleString('de-DE');
+            document.getElementById('game-pot-display').innerText = this.state.pot.toLocaleString('en-US');
             
             this.renderArenas();
             this.renderInventory();
@@ -903,7 +896,7 @@
         buyItem: function(itemId) {
             const item = this.state.shopItems.find(i => i.id === itemId);
             if(this.state.balance < item.price) {
-                alert("Nicht genügend Chips für diesen Artikel!");
+                alert("Not enough chips for this item!");
                 return;
             }
             this.state.balance -= item.price;
@@ -918,13 +911,13 @@
             
             this.state.shopItems.forEach(item => {
                 const isOwned = this.state.inventory.includes(item.id);
-                const btnText = isOwned ? 'Gekauft' : `Kaufen`;
+                const btnText = isOwned ? 'Owned' : `Buy`;
                 const btnClass = isOwned ? 'owned' : '';
                 container.innerHTML += `
                     <div class="shop-item-card">
                         <div class="shop-item-icon">${item.icon}</div>
                         <div class="shop-item-name">${item.name}</div>
-                        <div class="shop-item-price">${item.price.toLocaleString('de-DE')} 🪙</div>
+                        <div class="shop-item-price">${item.price.toLocaleString('en-US')} 🪙</div>
                         <button class="shop-item-btn ${btnClass}" onclick="app.buyItem('${item.id}')">${btnText}</button>
                     </div>
                 `;
@@ -935,17 +928,16 @@
             const container = document.getElementById('inventory-container');
             if(!container) return;
             container.innerHTML = '';
-            
-            if(this.state.inventory.length === 0) {
-                container.innerHTML = `<div class="inventory-item empty">Keine Items.<br>Besuche den Shop!</div>`;
-                return;
-            }
 
-            this.state.inventory.forEach(id => {
-                const item = this.state.shopItems.find(i => i.id === id);
+            this.state.shopItems.forEach(item => {
+                const isOwned = this.state.inventory.includes(item.id);
+                const opacityStyle = isOwned ? 'opacity: 1; border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.1);' : 'opacity: 0.3; filter: grayscale(100%);';
+                const lockIcon = isOwned ? '' : '<div style="position:absolute; top:-5px; right:-5px; font-size:12px;">🔒</div>';
+                
                 container.innerHTML += `
-                    <div class="inventory-item">
+                    <div class="inventory-item" style="position:relative; transition: all 0.3s; ${opacityStyle}">
                         ${item.icon}
+                        ${lockIcon}
                         <span>${item.name}</span>
                     </div>
                 `;
@@ -970,7 +962,7 @@
                             <div class="arena-details">
                                 <span>Blinds: ${arena.blinds}</span>
                                 <span>•</span>
-                                <span class="arena-buyin">Buy-in: ${arena.buyIn.toLocaleString('de-DE')}</span>
+                                <span class="arena-buyin">Buy-in: ${arena.buyIn.toLocaleString('en-US')}</span>
                             </div>
                         </div>
                         ${lockIcon}
@@ -982,7 +974,7 @@
         startGame: function(arenaIndex) {
             const arena = this.state.arenas[arenaIndex];
             if(this.state.balance < arena.buyIn) {
-                alert("Deine Bankroll reicht nicht für diese Arena. Bitte lade Chips im Tresor auf.");
+                alert("Your bankroll is not enough for this arena. Please reload chips in the Vault.");
                 return;
             }
 
@@ -1056,7 +1048,7 @@
                     <div class="liquid-glass opp-seat ${foldedClass}" id="bot-node-${b.id}">
                         ${cardsHtml}
                         <div class="opp-avatar">${b.icon}</div>
-                        <div class="opp-chips">${b.chips.toLocaleString('de-DE')}</div>
+                        <div class="opp-chips">${b.chips.toLocaleString('en-US')}</div>
                         <div class="opp-action-badge" id="bot-action-${b.id}">Action</div>
                     </div>
                 `;
@@ -1117,8 +1109,8 @@
             document.getElementById('player-action-controls').classList.remove('hidden');
             
             const arena = this.state.arenas[this.state.currentArenaIndex];
-            document.getElementById('btn-action-call').innerText = `Call ${arena.callAmt.toLocaleString('de-DE')}`;
-            document.getElementById('btn-action-raise').innerText = `Raise ${(arena.callAmt * 2).toLocaleString('de-DE')}`;
+            document.getElementById('btn-action-call').innerText = `Call ${arena.callAmt.toLocaleString('en-US')}`;
+            document.getElementById('btn-action-raise').innerText = `Raise ${(arena.callAmt * 2).toLocaleString('en-US')}`;
             
             this.updateProbabilityDisplay();
             this.renderBotsUI();
@@ -1135,10 +1127,10 @@
             
             if (isActive) {
                 controlRow.classList.remove('disabled');
-                msgObj.innerText = "Wische hoch zum Folden";
+                msgObj.innerText = "Swipe up to fold";
             } else {
                 controlRow.classList.add('disabled');
-                msgObj.innerText = "Gegner am Zug...";
+                msgObj.innerText = "Opponents turn...";
             }
         },
 
@@ -1189,7 +1181,7 @@
             if (actionType === 'fold') {
                 document.getElementById('player-pocket-cards').classList.add('is-folding');
                 this.state.isHandActive = false;
-                document.getElementById('game-status-msg').innerText = "Du hast gefoldet.";
+                document.getElementById('game-status-msg').innerText = "You folded. Opponents win.";
                 setTimeout(() => this.endHandCycle(), 800);
                 return;
             }
@@ -1198,7 +1190,7 @@
             let cost = (actionType === 'call') ? arena.callAmt : arena.callAmt * 2;
             
             if (this.state.balance < cost) {
-                alert("Nicht genügend Chips!");
+                alert("Not enough chips!");
                 this.togglePlayerTurn(true);
                 return;
             }
@@ -1251,7 +1243,7 @@
                     setTimeout(() => {
                         badge.classList.remove('show');
                         seatEl.classList.remove('active-turn');
-                        seatEl.querySelector('.opp-chips').innerText = bot.chips.toLocaleString('de-DE');
+                        seatEl.querySelector('.opp-chips').innerText = bot.chips.toLocaleString('en-US');
                     }, 600);
                     
                 }, sequenceDelay);
@@ -1348,7 +1340,7 @@
                 handName = straightFlushHigh === 14 ? "Royal Flush" : "Straight Flush";
             } else if (rankCounts[0].count === 4) {
                 score = 7000000 + rankCounts[0].rank * 100 + rankCounts[1].rank;
-                handName = "Vierling";
+                handName = "Four of a Kind";
             } else if (rankCounts[0].count === 3 && rankCounts[1] && rankCounts[1].count >= 2) {
                 score = 6000000 + rankCounts[0].rank * 100 + rankCounts[1].rank;
                 handName = "Full House";
@@ -1357,12 +1349,12 @@
                 handName = "Flush";
             } else if (straightHigh > 0) {
                 score = 4000000 + straightHigh;
-                handName = "Straße";
+                handName = "Straight";
             } else if (rankCounts[0].count === 3) {
                 score = 3000000 + rankCounts[0].rank * 10000;
                 let kickers = allCards.filter(c => c.v !== rankCounts[0].rank).slice(0,2);
                 score += (kickers[0]?.v || 0) * 100 + (kickers[1]?.v || 0);
-                handName = "Drilling";
+                handName = "Three of a Kind";
             } else if (rankCounts[0].count === 2 && rankCounts[1] && rankCounts[1].count >= 2) {
                 score = 2000000 + rankCounts[0].rank * 10000 + rankCounts[1].rank * 100;
                 let kickers = allCards.filter(c => c.v !== rankCounts[0].rank && c.v !== rankCounts[1].rank).slice(0,1);
@@ -1372,7 +1364,7 @@
                 score = 1000000 + rankCounts[0].rank * 10000;
                 let kickers = allCards.filter(c => c.v !== rankCounts[0].rank).slice(0,3);
                 score += (kickers[0]?.v || 0) * 100 + (kickers[1]?.v || 0) * 10 + (kickers[2]?.v || 0);
-                handName = "Paar";
+                handName = "Pair";
             } else {
                 score = (allCards[0]?.v || 0) * 10000 + 
                         (allCards[1]?.v || 0) * 1000 + 
@@ -1393,7 +1385,7 @@
             const msgEl = document.getElementById('game-status-msg');
 
             if (document.getElementById('player-pocket-cards').classList.contains('is-folding')) {
-                msgEl.innerText = "Du hast gefoldet. Gegner gewinnt.";
+                msgEl.innerText = "You folded. Opponents win.";
                 const activeBots = this.state.bots.filter(b => b.active);
                 if (activeBots.length > 0) activeBots[0].chips += this.state.pot;
                 this.state.pot = 0;
@@ -1429,17 +1421,17 @@
 
             setTimeout(() => {
                 if(activeBots.length === 0) {
-                    msgEl.innerText = `Alle Gegner gefoldet! Du gewinnst.`;
+                    msgEl.innerText = `All opponents folded! You win.`;
                     this.state.balance += this.state.pot;
                 } else {
                     if (bestBotScore > myEval.score) {
-                        msgEl.innerText = `${bestBot.name} gewinnt mit ${bestBotHand}. (${myEval.handName} verliert)`;
+                        msgEl.innerText = `${bestBot.name} wins with ${bestBotHand}. (${myEval.handName} loses)`;
                         bestBot.chips += this.state.pot;
                     } else if (myEval.score > bestBotScore) {
-                        msgEl.innerText = `Du gewinnst mit ${myEval.handName}!`;
+                        msgEl.innerText = `You win with ${myEval.handName}!`;
                         this.state.balance += this.state.pot;
                     } else {
-                        msgEl.innerText = `Split Pot! Beide haben ${myEval.handName}.`;
+                        msgEl.innerText = `Split Pot! Both have ${myEval.handName}.`;
                         this.state.balance += Math.floor(this.state.pot / 2);
                         bestBot.chips += Math.ceil(this.state.pot / 2);
                     }
@@ -1452,7 +1444,7 @@
                     let el = document.getElementById(`bot-node-${b.id}`);
                     if(el) {
                         let chipEl = el.querySelector('.opp-chips');
-                        if(chipEl) chipEl.innerText = b.chips.toLocaleString('de-DE');
+                        if(chipEl) chipEl.innerText = b.chips.toLocaleString('en-US');
                     }
                 });
 
@@ -1491,16 +1483,16 @@
         },
 
         handRankingsData: [
-            { name: "Royal Flush", desc: "A-K-Q-J-10 (gleiche Farbe)", ex: [{v:'A',s:'♠'}, {v:'K',s:'♠'}, {v:'Q',s:'♠'}, {v:'J',s:'♠'}, {v:'T',s:'♠'}] },
-            { name: "Straight Flush", desc: "5 in Folge (gleiche Farbe)", ex: [{v:'9',s:'♥'}, {v:'8',s:'♥'}, {v:'7',s:'♥'}, {v:'6',s:'♥'}, {v:'5',s:'♥'}] },
-            { name: "Vierling", desc: "4 gleiche Werte", ex: [{v:'A',s:'♠'}, {v:'A',s:'♥'}, {v:'A',s:'♦'}, {v:'A',s:'♣'}, {v:'K',s:'♦'}] },
-            { name: "Full House", desc: "3 Gleiche + 1 Paar", ex: [{v:'Q',s:'♠'}, {v:'Q',s:'♥'}, {v:'Q',s:'♦'}, {v:'T',s:'♣'}, {v:'T',s:'♦'}] },
-            { name: "Flush", desc: "5 Karten derselben Farbe", ex: [{v:'A',s:'♦'}, {v:'J',s:'♦'}, {v:'8',s:'♦'}, {v:'5',s:'♦'}, {v:'2',s:'♦'}] },
-            { name: "Straße", desc: "5 Karten in Folge", ex: [{v:'8',s:'♠'}, {v:'7',s:'♥'}, {v:'6',s:'♦'}, {v:'5',s:'♣'}, {v:'4',s:'♠'}] },
-            { name: "Drilling", desc: "3 gleiche Werte", ex: [{v:'J',s:'♠'}, {v:'J',s:'♥'}, {v:'J',s:'♣'}, {v:'A',s:'♦'}, {v:'2',s:'♣'}] },
-            { name: "Two Pair", desc: "Zwei Paare", ex: [{v:'T',s:'♠'}, {v:'T',s:'♥'}, {v:'9',s:'♦'}, {v:'9',s:'♣'}, {v:'A',s:'♠'}] },
-            { name: "Paar", desc: "Ein Paar", ex: [{v:'A',s:'♠'}, {v:'A',s:'♥'}, {v:'K',s:'♦'}, {v:'T',s:'♣'}, {v:'4',s:'♦'}] },
-            { name: "High Card", desc: "Höchste Karte gewinnt", ex: [{v:'A',s:'♠'}, {v:'K',s:'♥'}, {v:'5',s:'♦'}, {v:'4',s:'♣'}, {v:'2',s:'♠'}] }
+            { name: "Royal Flush", desc: "A-K-Q-J-10 (same suit)", ex: [{v:'A',s:'♠'}, {v:'K',s:'♠'}, {v:'Q',s:'♠'}, {v:'J',s:'♠'}, {v:'T',s:'♠'}] },
+            { name: "Straight Flush", desc: "5 in a row (same suit)", ex: [{v:'9',s:'♥'}, {v:'8',s:'♥'}, {v:'7',s:'♥'}, {v:'6',s:'♥'}, {v:'5',s:'♥'}] },
+            { name: "Four of a Kind", desc: "4 of same value", ex: [{v:'A',s:'♠'}, {v:'A',s:'♥'}, {v:'A',s:'♦'}, {v:'A',s:'♣'}, {v:'K',s:'♦'}] },
+            { name: "Full House", desc: "3 of a kind + Pair", ex: [{v:'Q',s:'♠'}, {v:'Q',s:'♥'}, {v:'Q',s:'♦'}, {v:'T',s:'♣'}, {v:'T',s:'♦'}] },
+            { name: "Flush", desc: "5 of same suit", ex: [{v:'A',s:'♦'}, {v:'J',s:'♦'}, {v:'8',s:'♦'}, {v:'5',s:'♦'}, {v:'2',s:'♦'}] },
+            { name: "Straight", desc: "5 in a row", ex: [{v:'8',s:'♠'}, {v:'7',s:'♥'}, {v:'6',s:'♦'}, {v:'5',s:'♣'}, {v:'4',s:'♠'}] },
+            { name: "Three of a Kind", desc: "3 of same value", ex: [{v:'J',s:'♠'}, {v:'J',s:'♥'}, {v:'J',s:'♣'}, {v:'A',s:'♦'}, {v:'2',s:'♣'}] },
+            { name: "Two Pair", desc: "Two pairs", ex: [{v:'T',s:'♠'}, {v:'T',s:'♥'}, {v:'9',s:'♦'}, {v:'9',s:'♣'}, {v:'A',s:'♠'}] },
+            { name: "Pair", desc: "One pair", ex: [{v:'A',s:'♠'}, {v:'A',s:'♥'}, {v:'K',s:'♦'}, {v:'T',s:'♣'}, {v:'4',s:'♦'}] },
+            { name: "High Card", desc: "Highest card wins", ex: [{v:'A',s:'♠'}, {v:'K',s:'♥'}, {v:'5',s:'♦'}, {v:'4',s:'♣'}, {v:'2',s:'♠'}] }
         ],
 
         buildRulesList: function() {
@@ -1528,7 +1520,6 @@
 
         openRules: function() {
             document.getElementById('rules-overlay-sheet').classList.add('open');
-            // If live hand exists, we can scroll it into view
             setTimeout(() => {
                 const active = document.querySelector('.active-rule');
                 if(active) active.scrollIntoView({behavior: 'smooth', block: 'center'});
