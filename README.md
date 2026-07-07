@@ -1,6 +1,4 @@
-# Glass Poker <img width="768" height="1376" alt="579AA696-707F-405B-A3E4-491235F85F69" src="https://github.com/user-attachments/assets/55cc36d7-7fd4-4641-8df4-6c82676d44c8" />
-<img width="768" height="1376" alt="579AA696-707F-405B-A3E4-491235F85F69" src="https://github.com/user-attachments/assets/a20b26d2-c956-42b4-a8e1-577a34f44221" />
-
+# Glass Poker
 
 Glass Poker is a minimalist, single-handed web application for playing poker (Texas Hold'em) against AI opponents. The entire interface is built upon a modern, high-resolution liquid glass design (glassmorphism), creating a clean depth effect through semi-transparent surfaces, background blur, and soft borders.
 
@@ -50,3 +48,8 @@ This project is licensed under the MIT License. See the LICENSE file for details
 ## Play
 
 Hit that Link to play Glass Poker V.1.0: https://poicpp.github.io/Glasspoker/
+
+
+
+<img width="768" height="1376" alt="579AA696-707F-405B-A3E4-491235F85F69" src="https://github.com/user-attachments/assets/2d3696a0-cf76-4496-8427-029048958854" />
+
