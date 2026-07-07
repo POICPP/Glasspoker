@@ -34,7 +34,7 @@ Before entering a game, a glass slider allows you to easily adjust the stakes (b
 Since the project consists entirely of client-side code, no installation or local server environment is required.
 
 1. Clone the repository:
-   git clone https://github.com/poicpp/glass-poker.git
+   git clone https://github.com/poicpp/glasspoker.git
 
 2. Navigate into the directory:
    cd glass-poker
