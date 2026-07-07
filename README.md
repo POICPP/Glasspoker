@@ -34,7 +34,7 @@ Vor Spielbeginn ermöglicht ein Schieberegler die Anpassung der Stakes (Blinds) 
 Da das Projekt ausschließlich aus Client-seitigem Code besteht, ist keine Installation oder Server-Umgebung notwendig.
 
 1. Klone das Repository:
-   git clone https://github.com/dein-benutzername/glass-poker.git
+   git clone https://github.com/poicpp/glass-poker.git
 
 2. Navigiere in das Verzeichnis:
    cd glass-poker
