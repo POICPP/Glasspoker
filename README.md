@@ -44,3 +44,7 @@ Since the project consists entirely of client-side code, no installation or loca
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Play
+
+Hit that Link to play Glass Poker V.1.0: https://poicpp.github.io/Glasspoker/
